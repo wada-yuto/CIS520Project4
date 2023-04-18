@@ -15,7 +15,7 @@ _OBJ = pthread_scorecard_generator.o
 OBJ = $(patsubst %,$(OBJDIR)/%,$(_OBJ))
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -pthread -c -o $@ $< $(CFLAGS)
 
 pthread_scorecard_generator: $(OBJ)
-	$(CC) -o $@ $^ $(CFLAGS)
+	$(CC) -pthread -o $@ $^ $(CFLAGS)

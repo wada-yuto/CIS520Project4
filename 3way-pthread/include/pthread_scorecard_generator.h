@@ -41,13 +41,13 @@ extern "C"
     // Prints the completed scorecard
     // \param sc A pointer to the scorecard to be printed
     //
-    void print_scorecard(scorecard_t *sc);
+    void print_scorecard(scorecard_t *sc, int section_count, int section_size, int remainder_size);
 
     //
     // Frees the memory of a scorecard object
     // \param sc The scorecard to be freed
     //
-    void free_scorecard(scorecard_t *sc);
+    void free_scorecard(scorecard_t *sc, int section_count);
 
 #ifdef __cplusplus
 }
