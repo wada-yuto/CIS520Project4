@@ -2,23 +2,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+//#include "OpenMP.h"
 
 #define N 100
+#define NUM_LINES 2
 
 int main(int argc, char *argv[]) {
-    //char a = 'a';
-    //printf("%d", a);
+    // char a = 'a';
+    // printf("%d", a);
 
-    char* line, results;
-    size_t* len;
-    ssize_t bytes_read;
+    size_t len = 120;
+    char* line = (char*)malloc(len * sizeof(char));
+    //ssize_t bytes_read;
     size_t line_num = 0;
-    char result[N];
+    char result[NUM_LINES];
     char c;
     char max_c = '0';
     int count = 0;
-
-    *len = sizeof(char);
 
     //checks that enough arguments were input
     if (argc < 2) 
@@ -52,18 +52,39 @@ int main(int argc, char *argv[]) {
     //     line_num++;
     // }
 
-    for (c = getc(file); c != EOF; c = getc(file)) {
-        if(c > max_c) {
-            max_c = c;
+    // for (c = getc(file); c != EOF; c = getc(file)) {
+    //     //printf("char: %c\n", c);
+    //     if(c > max_c) {
+    //         max_c = c;
+    //     }
+    //     if (c == '\n') {
+    //         printf("max char: %c", max_c);
+    //         result[line_num] = max_c;
+    //         max_c = '0';
+    //         line_num++;
+    //     }
+    // }
+
+    //gets the max character from each line and puts them into an array
+    for(int i = 0; i < NUM_LINES; i++) {
+        int next = 0;
+        getline(&line, &len, file); 
+        c = *line; 
+        max_c = c; 
+        //find max character from the line
+        while(c != '\n' && c != '\0') {
+            c = *(line+next);
+            //check if character is greater than the current max
+            if(c > max_c) {
+                max_c = c;
+            }
+            next++;
         }
-        if (c == '\n') {
-            result[line_num] = max_c;
-            max_c = '0';
-            line_num++;
-        }
+        result[i] = max_c; //place max character in array
     }
 
-    for(int i = 0; i < N; i++) {
+    //print out the resulting max characters of each line
+    for(int i = 0; i < NUM_LINES; i++) {
         printf("%d: %d\n", i, result[i]);
     }
 
