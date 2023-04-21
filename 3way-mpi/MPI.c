@@ -9,6 +9,28 @@ char char_array[ARR_SIZE][STR_SIZE];
 float line_length[ARR_SIZE];
 float line_counts[ARR_SIZE];	// count of individual char (global)
 float local_line_count[ARR_SIZE];
+int THREADS;
+
+void *calculate_array(void *rank){
+
+    ID = *((int*) rank);
+    int char_count[ARR_SIZE];
+    int startingPosition = ((long) ID) * (ARR_SIZE / THREADS);
+    int endPosition = startingPosition + (ARR_SIZE / THREADS);
+
+    for (int i = startingPosition; i < endPosition; i++){
+        char_count[i] = 0;
+        for (int j = 0; j < line_length[i]; j++){
+            char currentChar = char_array[i][j];
+            int characterLocation = int(currentChar);
+
+            char_count[i] += characterLocation
+        }
+    }
+    for (int i = startingPosition; i < endPosition; i++){
+        local_line_count[i] = local_line_count[i]/line_length[i];
+    }
+}
 
 //Need to open the file
 void array_initialize(){
@@ -45,10 +67,15 @@ void array_initialize(){
 
 }
 
+void print(){
+    for (int i = 0 ;i < ARR_SIZE; i++){
+        printf("%d: %.1f\n", i, line_counts[i]);
+    }
+}
 
 
-int main(int argc, char *argv[])
-{
+
+int main(int argc, char *argv[]){
 
     MPI_Status status;
     int num, rank, size, tag, next, from;
@@ -58,9 +85,8 @@ int main(int argc, char *argv[])
         MPI_Comm_size(MPI_COMM_WORLD,&num);
         MPI_Comm_rank(MPI_COMM_WORLD,&rank);
     }
-    else{
-        MPI_ABORT(MPI_COMM_WORLD, result)
-    }
+    MPI_ABORT(MPI_COMM_WORLD, result);
+    
 
 
     MPI_Finalize();
