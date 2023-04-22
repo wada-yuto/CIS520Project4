@@ -6,6 +6,8 @@ extern "C"
 {
 #endif
 
+#define MAX_FILE_NAME 128
+
     typedef struct scorecard scorecard_t;
     typedef struct thread_data thread_data_t;
 
@@ -15,14 +17,14 @@ extern "C"
     // \param argv Command line arguments
     // \return File descriptor, negative number on error
     //
-    int get_file(int argc, char *argv[]);
+    char *get_filename(int argc, char *argv[]);
 
     //
     // Counts the number of lines within a provided file
     // \param fd File descriptor
     // \return The number of lines in the file, negative number on error
     //
-    int count_lines(int fd);
+    int count_lines(FILE *fd);
 
     //
     // TODO: Investigate *how* to do this
