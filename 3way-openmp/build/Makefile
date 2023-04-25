@@ -1,3 +1,5 @@
+# Compiles the OpenMP.code
+
 INCDIR=../include
 SRCDIR=../src
 
@@ -13,7 +15,7 @@ _OBJ = OpenMP.o
 OBJ = $(patsubst %,$(OBJDIR)/%,$(_OBJ))
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -openmp -c -o $@ $< $(CFLAGS)
 
-OpenMP: $(OBJ)
-	$(CC) -o $@ $^ $(CFLAGS)
+openmp: $(OBJ)
+	$(CC) -fopenmp -openmp -o $@ $^ $(CFLAGS)
