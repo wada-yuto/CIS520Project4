@@ -1,11 +1,11 @@
-//#include <omp.h>
+#include <omp.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 //#include "OpenMP.h"
 
 #define N 100
-#define NUM_LINES 2
+#define NUM_LINES 5
 
 int main(int argc, char *argv[]) {
     // char a = 'a';
@@ -14,11 +14,13 @@ int main(int argc, char *argv[]) {
     size_t len = 120;
     char* line = (char*)malloc(len * sizeof(char));
     //ssize_t bytes_read;
-    size_t line_num = 0;
+    int line_num = 0;
     char result[NUM_LINES];
+    char* data[NUM_LINES];
     char c;
     char max_c = '0';
-    int count = 0;
+    //int count = 0;
+    int i;
 
     //checks that enough arguments were input
     if (argc < 2) 
@@ -37,6 +39,23 @@ int main(int argc, char *argv[]) {
         printf("PARAMETER FAILURE: invalid filename\n");
         return EXIT_FAILURE;
     }
+
+    for(int j = 0; j < NUM_LINES; j++) {
+        char* new_line = (char*)malloc(len * sizeof(char));
+        getline(&new_line, &len, file);
+        data[j] = new_line;
+    }
+
+    // int sections = num_lines/N;
+    // int lines = N;
+    // for(int j = 0; j < sections + 1; j++) {
+    //     if(j == sections) {
+    //         lines = num_lines % N;
+    //     }
+    //     get_lines(data, lines, line_num);
+    //     process_lines(data, lines, line_num, result);
+    //     print_results(result, lines, line_num);
+    // }
 
     // for(bytes_read = getline(&line, len, file); bytes_read != -1; bytes_read = getline(&line, len, file)) {
     //     printf("line %zu\n", line_num);
@@ -65,28 +84,38 @@ int main(int argc, char *argv[]) {
     //     }
     // }
 
-    //gets the max character from each line and puts them into an array
-    for(int i = 0; i < NUM_LINES; i++) {
-        int next = 0;
-        getline(&line, &len, file); 
-        c = *line; 
-        max_c = c; 
-        //find max character from the line
-        while(c != '\n' && c != '\0') {
-            c = *(line+next);
-            //check if character is greater than the current max
-            if(c > max_c) {
-                max_c = c;
+    #pragma omp parallel shared(len, result) private(line, c, max_c, i) 
+    {
+        #pragma omp for schedule(static) 
+        for(i = 0; i < NUM_LINES; i++) 
+        {
+            //gets the max character from each line and puts them into an array
+            int next = 0;
+            line = data[i];
+            c = *line; 
+            max_c = c; 
+            //find max character from the line
+            while(c != '\n' && c != '\0') 
+            {
+                c = *(line+next);
+                //check if character is greater than the current max
+                if(c > max_c) {
+                    max_c = c;
+                }
+                next++;
             }
-            next++;
+            result[i] = max_c; //place max character in array
         }
-        result[i] = max_c; //place max character in array
     }
 
+
     //print out the resulting max characters of each line
-    for(int i = 0; i < NUM_LINES; i++) {
-        printf("%d: %d\n", i, result[i]);
+    for(int j = 0; j < NUM_LINES; j++) 
+    {
+        //printf("%d: %d\n", j, result[j]);
+        printf("%d: %c\n", j, result[j]);
     }
+
 
     //close the file
     fclose(file);

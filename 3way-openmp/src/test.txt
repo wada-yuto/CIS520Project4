@@ -1,2 +1,5 @@
 abac
 xzzz
+a
+b
+c
