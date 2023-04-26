@@ -16,23 +16,50 @@ int THREADS;
 
 void *calculate_array(void *rank){
 
-    int ID = *((int*) rank);
-    int char_count[ARR_SIZE];
-    int startingPosition = ((long) ID) * (ARR_SIZE / THREADS);
-    int endPosition = startingPosition + (ARR_SIZE / THREADS);
+    // int ID = *((int*) rank);
+    // int char_count[ARR_SIZE];
+    // int startingPosition = ((long) ID) * (ARR_SIZE / THREADS);
+    // int endPosition = startingPosition + (ARR_SIZE / THREADS);
 
-    for (int i = startingPosition; i < endPosition; i++){
-        char_count[i] = 0;
-        for (int j = 0; j < line_length[i]; j++){
-            char currentChar = char_array[i][j];
-            int characterLocation = (int) currentChar;
+    // for (int i = startingPosition; i < endPosition; i++){
+    //     char_count[i] = 0;
+    //     for (int j = 0; j < line_length[i]; j++){
+    //         char currentChar = char_array[i][j];
+    //         int characterLocation = (int) currentChar;
 
-            char_count[i] += characterLocation;
+    //         char_count[i] += characterLocation;
+    //     }
+    // }
+    // for (int i = startingPosition; i < endPosition; i++){
+    //     local_line_count[i] = local_line_count[i]/line_length[i];
+    // }
+
+
+    char theChar;
+    int i;
+    int j;
+    int characterLocation;
+    int myID =  *((int*) rank);
+    int local_char_count[ARR_SIZE];
+    int startPos = ((long) myID) * (ARR_SIZE / THREADS);
+    int endPos = startPos + (ARR_SIZE / THREADS);
+
+    if (THREADS % 2 != 0) endPos += 1;
+
+    printf("myID = %d startPos = %d endPos = %d \n", myID, startPos, endPos); fflush(stdout);
+
+    for ( i = startPos; i < endPos; i++) {
+            local_char_count[i] = 0;
+            for ( j = 0; j < line_length[i]; j++ ) {
+                theChar = char_array[i][j];
+                characterLocation = (int) theChar;
+                
+                local_char_count[i] += characterLocation;
+            }
         }
-    }
-    for (int i = startingPosition; i < endPosition; i++){
-        local_line_count[i] = local_line_count[i]/line_length[i];
-    }
+        for ( i = startPos; i < endPos; i++ ) {
+            local_line_count[i] = local_char_count[i]/line_length[i];
+        }
 }
 
 //Need to open the file
@@ -45,8 +72,6 @@ void array_initialize(){
     //Initialize the line_length so its not empty
     for (int i = 0; i < ARR_SIZE; i++) {
         line_length[i] = 0.0;
-        line_counts[i] = 0;
-        local_line_count[i] = 0;
     }
 
     // for (int i = 0; i < ARR_SIZE; i++ ) {
@@ -64,7 +89,14 @@ void array_initialize(){
         for ( int j = 0; j < line_length[i]; j++ ) {
             char_array[i][j] = line[j];
         }
+        for (int i = 0; i < ARR_SIZE; i++) {
+        line_counts[i] = 0;
+        local_line_count[i] = 0;
     }
+
+    }
+    printf("Read in file\n");
+    fflush(stdout);
     free(line);
     fclose(file);
 
@@ -87,7 +119,6 @@ int main(int argc, char *argv[]){
     struct timeval time1;
     struct timeval time2;
 
-
     gettimeofday(&time1, NULL);
 
     int result = MPI_Init(&argc, &argv);
@@ -96,6 +127,7 @@ int main(int argc, char *argv[]){
         MPI_Comm_rank(MPI_COMM_WORLD,&rank);
 
         THREADS = num;
+        printf("THREAD COUNT = %d\n", THREADS);
 
         if (rank == 0) array_initialize();
         
@@ -113,7 +145,7 @@ int main(int argc, char *argv[]){
         runTime += (time2.tv_usec - time1.tv_usec) / 1000.0; // us to ms
         printf("DATA, %d, %s, %f\n", 1, getenv("SLURM_NTASKS"),  runTime);
 
-        MPI_Finalize();
+        //MPI_Finalize();
         return 0;
     }
     MPI_Abort(MPI_COMM_WORLD, result);
