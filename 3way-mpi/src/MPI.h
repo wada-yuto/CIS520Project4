@@ -7,12 +7,11 @@ extern "C"
 {
 #endif
 
+    void init_arrays();
 
-    void *calculate_array(void *rank);
+    void *count_array(void *rank)
 
-    void array_initialize();
-
-    void print();
+    void print_results()
 
     int main(int argc, char *argv[]);
 
