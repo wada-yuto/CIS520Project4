@@ -7,7 +7,7 @@
 #include <time.h>
 
 #define N 100
-#define NUM_LINES 1000000
+#define NUM_LINES 100
 
 int main(int argc, char *argv[]) {
     size_t len = 120;
@@ -121,7 +121,7 @@ void print_results(char* results, int num_lines, int line_num) {
      //print out the resulting max characters of each line
     for(int j = 0; j < num_lines; j++) 
     {
-        printf("%d: %d\n", j, result[j]);
+        printf("%d: %d\n", j, results[j]);
         //printf("%d: %c\n", j + line_num, results[j]);
     }
 }
