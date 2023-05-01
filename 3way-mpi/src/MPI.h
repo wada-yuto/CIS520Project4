@@ -7,13 +7,13 @@ extern "C"
 {
 #endif
 
-    void init_arrays();
+    void setup_array();
 
-    void *count_array(void *rank)
+    void *count_array(void *rank);
 
-    void print_results()
+    void print_results();
 
-    int main(int argc, char *argv[]);
+    int main(int argc, char* argv[]) ;
 
 
 #ifdef __cplusplus
